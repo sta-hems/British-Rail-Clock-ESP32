@@ -1,5 +1,7 @@
 # British Rail Clock — Arduino IDE Version
 
+*[English version](README.en.md)*
+
 Angepasst für: **ESP32-WROOM-32** + **1,28" GC9A01 TFT, 240x240 px, rund**
 
 ## Verkabelung
@@ -28,13 +30,14 @@ SDA/SCL entsprechen den Standard-VSPI-Pins des ESP32 (MOSI=23, SCK=18), CS=5 ist
    - Öffne in diesem Bibliotheksordner die Datei `User_Setup_Select.h` und:
      - Kommentiere die Zeile `#include <User_Setup.h>` aus (ein `//` davor).
      - Füge eine neue Zeile hinzu: `#include <User_Setups/Setup_GC9A01_ESP32.h>`
-4. Sketch `BritishRailClock/BritishRailClock.ino` in der Arduino IDE öffnen.
-5. Board wählen: Werkzeuge → Board → ESP32 Arduino → **ESP32 Dev Module**.
-6. Hochladen.
+4. **WLAN-Zugangsdaten eintragen**: `BritishRailClock/secrets.h.example` nach `BritishRailClock/secrets.h` kopieren und dort `WIFI_SSID`/`WIFI_PASSWORD` eintragen. `secrets.h` ist per `.gitignore` ausgeschlossen und wird nie committet.
+5. Sketch `BritishRailClock/BritishRailClock.ino` in der Arduino IDE öffnen.
+6. Board wählen: Werkzeuge → Board → ESP32 Arduino → **ESP32 Dev Module**.
+7. Hochladen.
 
 ## Hinweise
 
-- Der Code enthält keine Echtzeituhr — die angezeigte Zeit ist ein reiner hochlaufender Zähler (siehe Original-README).
+- Die Uhr zeigt die echte Zeit für Europe/Berlin (24-Stunden-Format, automatische Sommerzeit-Umschaltung), per WiFi/NTP beim Start synchronisiert und danach jede Minute erneut abgeglichen, damit sie nicht driftet. Schlägt WLAN oder die Zeitsynchronisation beim Start fehl, läuft die Uhr als Fallback mit einem simulierten Zähler weiter (wie im ursprünglichen Projekt), damit sie trotzdem animiert.
 - Der Sketch erkennt automatisch, ob das installierte ESP32-Core (2.x oder 3.x) die alte oder neue Timer-API benutzt, da sich diese zwischen den Versionen geändert hat.
 - Falls das Display invertierte Farben oder ein Spiegelbild zeigt, in `Setup_GC9A01_ESP32.h` ggf. `TFT_INVERSION_ON`/`TFT_INVERSION_OFF` ergänzen bzw. `tft.setRotation()` im Sketch anpassen.
 

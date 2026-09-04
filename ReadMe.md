@@ -18,7 +18,7 @@ The basic cycle of the clock is 1 minute. The two arrows complete a circuit of t
 
 ## This fork: Arduino IDE version (ESP32-WROOM-32)
 
-This fork adds an [Arduino IDE](https://www.arduino.cc/en/software) build of the clock (the original project uses PlatformIO), plus real time via WiFi/NTP instead of the fake counter. See [ArduinoIDE/README.md](ArduinoIDE/README.md) for full setup instructions (in German).
+This fork adds an [Arduino IDE](https://www.arduino.cc/en/software) build of the clock (the original project uses PlatformIO), plus real time via WiFi/NTP instead of the fake counter. See [ArduinoIDE/README.en.md](ArduinoIDE/README.en.md) for full setup instructions (also available [in German](ArduinoIDE/README.md)).
 
 **New in this fork:**
 - **Arduino IDE compatibility** - ready-to-open sketch in [ArduinoIDE/BritishRailClock/](ArduinoIDE/BritishRailClock/) (no PlatformIO needed), with an ESP32 core 2.x/3.x compatible timer setup and a TFT_eSPI setup file matching the wiring below
