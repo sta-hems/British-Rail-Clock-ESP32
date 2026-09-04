@@ -16,3 +16,25 @@ The heart of the code is the management of 4 sprites. The two arrow sprites only
 ## Timer
 The basic cycle of the clock is 1 minute. The two arrows complete a circuit of the clock which is a distance of 240 pixels up & down i.e 480 pixels in 60 seconds. The clock is therefore programmed to tick every 60M/480 microsecs.<br>
 
+## This fork: Arduino IDE version (ESP32-WROOM-32)
+
+This fork adds an [Arduino IDE](https://www.arduino.cc/en/software) build of the clock (the original project uses PlatformIO), plus real time via WiFi/NTP instead of the fake counter. See [ArduinoIDE/README.md](ArduinoIDE/README.md) for full setup instructions (in German).
+
+**Hardware:** ESP32-WROOM-32 + 1.28" round GC9A01 TFT, 240x240 px
+
+**Wiring:**
+
+| Display pin | ESP32 GPIO |
+|---|---|
+| RST | 22 |
+| CS  | 5  |
+| DC  | 21 |
+| SDA (MOSI) | 23 |
+| SCL (SCK)  | 18 |
+| VCC | 3.3V |
+| GND | GND |
+
+SDA/SCL match the ESP32's default VSPI pins (MOSI=23, SCK=18), CS=5 is also the VSPI default.
+
+The sketch lives in [ArduinoIDE/BritishRailClock/](ArduinoIDE/BritishRailClock/). It shows the real time for Europe/Berlin (24h, automatic DST) synced over WiFi/NTP, falling back to the original free-running fake clock if WiFi/NTP is unavailable at boot.
+
