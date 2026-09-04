@@ -8,6 +8,7 @@
 #include <math.h>
 #include <SPI.h>
 #include <TFT_eSPI.h> // Hardware-specific library
+#include <esp_arduino_version.h>
 
 #define BASE_COLOR TFT_BLACK
 
@@ -26,7 +27,7 @@ TFT_eSprite timeSprite = TFT_eSprite(&tft);  // time as text
 hw_timer_t *Timer0_Cfg = NULL;
 
 unsigned int sWidth,sHeight,currentMinute;
-bool timerTicked = false;
+volatile bool timerTicked = false;
 unsigned int OUTER_CIRCLE_INNER_RADIUS,OUTER_CIRCLE_OUTER_RADIUS,CURRENT_STEP;
 unsigned int INNER_CIRCLE_INNER_RADIUS,INNER_CIRCLE_OUTER_RADIUS;
 float hypotenuse;
@@ -120,6 +121,11 @@ void setup(void) {
   tft.fillScreen(BASE_COLOR); 
   // create base sprite & fill it
   // If I make a sprite the same size as the tft screen my code freezes.
+  // 8-bit color depth: on classic ESP32 the DRAM heap is split by the
+  // reserved WiFi/BT buffers, so the largest free block is often just
+  // over 100KB - a 238x238 16-bit sprite (113KB) fails to allocate there,
+  // while the same sprite at 8-bit (57KB) fits comfortably.
+  baseSprite.setColorDepth(8);
   baseSprite.createSprite(sWidth-(BASE_BORDER*2),sHeight-(BASE_BORDER*2));
   // calculate inner,outer radii of the 2 circles
   OUTER_CIRCLE_OUTER_RADIUS = (baseSprite.width()/2) - ARROW_WIDTH;
@@ -143,10 +149,18 @@ void setup(void) {
 
   CURRENT_STEP = 0;
   // set timer to interrupt DOT_STEPS times every 60 secs
+  // The ESP32 Arduino timer API changed between core 2.x and core 3.x,
+  // so both variants are supported here depending on the installed core.
+#if ESP_ARDUINO_VERSION_MAJOR >= 3
+  Timer0_Cfg = timerBegin(1000000);  // 1 MHz timer clock
+  timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR);
+  timerAlarm(Timer0_Cfg, 60000000L/DOT_STEPS, true, 0);
+#else
   Timer0_Cfg = timerBegin(0, 80, true);
   timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
   timerAlarmWrite(Timer0_Cfg, 60000000L/DOT_STEPS, true);
   timerAlarmEnable(Timer0_Cfg);
+#endif
 
   currentMinute = 59+(23*60);  // want to see minute/hour rollover quickly
   displayTime(currentMinute++);
