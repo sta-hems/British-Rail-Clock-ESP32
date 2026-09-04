@@ -20,6 +20,13 @@ The basic cycle of the clock is 1 minute. The two arrows complete a circuit of t
 
 This fork adds an [Arduino IDE](https://www.arduino.cc/en/software) build of the clock (the original project uses PlatformIO), plus real time via WiFi/NTP instead of the fake counter. See [ArduinoIDE/README.md](ArduinoIDE/README.md) for full setup instructions (in German).
 
+**New in this fork:**
+- **Arduino IDE compatibility** - ready-to-open sketch in [ArduinoIDE/BritishRailClock/](ArduinoIDE/BritishRailClock/) (no PlatformIO needed), with an ESP32 core 2.x/3.x compatible timer setup and a TFT_eSPI setup file matching the wiring below
+- **WiFi connectivity** - connects to your network at boot, with a bounded timeout and a fallback to the original fake clock if the connection fails
+- **NTP time sync** - real time for Europe/Berlin (24h format, automatic CET/CEST daylight-saving switch), resynced every minute so it doesn't drift; no more fake counter
+- **Fix for a classic-ESP32 heap issue** - the base sprite uses 8-bit color instead of 16-bit so it reliably fits in the largest free heap block (see [ArduinoIDE/README.md](ArduinoIDE/README.md#bekanntes-problem-display-bleibt-schwarz) for details), otherwise the display can stay black
+- WiFi credentials are kept in a local, gitignored `secrets.h` (see `secrets.h.example`), not committed to the repo
+
 **Hardware:** ESP32-WROOM-32 + 1.28" round GC9A01 TFT, 240x240 px
 
 **Wiring:**
